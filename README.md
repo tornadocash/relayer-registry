@@ -1,4 +1,4 @@
-# Peppersec solidity template [![Build Status](https://github.com/peppersec/solidity-template/workflows/build/badge.svg)](https://github.com/peppersec/solidity-template/actions)
+# Tornado Cash relayer registry contract [![Build Status](https://github.com/tornadocash/relayer-registry/workflows/build/badge.svg)](https://github.com/tornadocash/relayer-registry/actions)
 
 ## Dependencies
 
@@ -9,7 +9,6 @@
 
 ```bash
 $ yarn
-$ cp .env.example .env
 $ yarn test
 ```
 

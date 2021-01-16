@@ -43,5 +43,6 @@
     "truffle-hdwallet-provider": "^1.0.17",
     "truffle-plugin-verify": "^0.3.11",
     "web3": "^1.2.11"
-  }
+  },
+  "dependencies": {}
 }
