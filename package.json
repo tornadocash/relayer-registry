@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/peppersec/solidity-template#readme",
   "devDependencies": {
-    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/contracts": "^3.3.0",
     "babel-eslint": "^10.1.0",
     "bn-chai": "^1.0.1",
     "chai": "^4.2.0",
@@ -44,5 +44,7 @@
     "truffle-plugin-verify": "^0.3.11",
     "web3": "^1.2.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "torn-token": "^1.0.0"
+  }
 }
