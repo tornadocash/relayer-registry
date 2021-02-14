@@ -21,7 +21,6 @@ contract RelayerRegistry is EnsResolve {
   }
 
   function add(bytes32 _relayer) public {
-    require(msg.sender == governance, "unauthorized");
     require(!isRelayer[_relayer], "The relayer already exists");
     uint256 _stake = stake;
     if (_stake > 0) {
