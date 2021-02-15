@@ -82,10 +82,6 @@ contract('RelayerRegistry', (accounts) => {
     it('should return correct token amount after stake change')
     it('should allow relayer to initiate exit')
 
-    it('should prevent unauthorized access', async () => {
-      await registry.add(relayer1)
-      await registry.remove(relayer1, { from: accounts[1] }).should.be.rejectedWith('unauthorized')
-    })
   })
 
   describe('#setStake', () => {
