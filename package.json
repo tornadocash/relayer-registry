@@ -1,0 +1,35 @@
+{
+  "name": "project-template",
+  "version": "1.0.0",
+  "description": "A template with all preferred configs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "eslint": "eslint --ext .js --ignore-path .gitignore .",
+    "prettier:check": "prettier --check . --config .prettierrc",
+    "prettier:fix": "prettier --write . --config .prettierrc",
+    "lint": "yarn eslint && yarn prettier:check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peppersec/project-template.git"
+  },
+  "author": "peppersec.com <hello@peppersec.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peppersec/project-template/issues"
+  },
+  "homepage": "https://github.com/peppersec/project-template#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.17",
+    "solhint-plugin-prettier": "^0.0.5"
+  }
+}

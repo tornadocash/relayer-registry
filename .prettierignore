@@ -1,0 +1,6 @@
+.vscode
+.idea
+cache
+artifacts
+build
+dist
