@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('@nomiclabs/hardhat-waffle')
 require('@nomiclabs/hardhat-etherscan')
-require('poma/hardhat-etherscan-abi')
+require('hardhat-etherscan-abi')
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -21,7 +21,7 @@ module.exports = {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
-        blockNumber: 12083246,
+        blockNumber: 13000000,
       },
     },
     mainnet: {

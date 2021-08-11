@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/peppersec/project-template#readme",
   "dependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "hardhat-etherscan-abi": "^0.1.1"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
@@ -37,7 +38,6 @@
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "hardhat": "^2.1.2",
-    "hardhat-etherscan-abi": "poma/hardhat-etherscan-abi",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.17",
     "solhint-plugin-prettier": "^0.0.5"
