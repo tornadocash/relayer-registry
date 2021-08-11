@@ -1,4 +1,4 @@
-# Peppersec project template [![Build Status](https://github.com/peppersec/project-template/workflows/build/badge.svg)](https://github.com/peppersec/project-template/actions)
+# Tornado cash relayer registry [![Build Status](https://github.com/tornadocash/relayer-registry/workflows/build/badge.svg)](https://github.com/tornadocash/relayer-registry/actions)
 
 ## Dependencies
 
@@ -10,5 +10,5 @@
 ```bash
 $ yarn
 $ cp .env.example .env
-$ yarn start
+$ yarn test
 ```
