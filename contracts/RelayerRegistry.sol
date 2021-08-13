@@ -4,17 +4,18 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 
 interface IENS {
   function owner(bytes32 node) external view returns (address);
 }
 
-contract RelayerRegistry is Ownable {
+contract RelayerRegistry is Ownable, Initializable {
   using SafeMath for uint256;
 
   IERC20 public constant TORN = IERC20(0x77777FeDdddFfC19Ff86DB637967013e6C6A116C);
   IENS public constant ENS = IENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
-  address public immutable withdrawalProxy;
+  address public withdrawalProxy;
 
   mapping(address => Relayer) public relayers;
   uint256 public txFee;
@@ -40,7 +41,7 @@ contract RelayerRegistry is Ownable {
     mapping(address => bool) addresses;
   }
 
-  constructor (address _withdrawalProxy, uint256 _txFee, uint256 _minStake) {
+  function initialize(address _withdrawalProxy, uint256 _txFee, uint256 _minStake) external initializer {
     withdrawalProxy = _withdrawalProxy;
     txFee = _txFee;
     minStake = _minStake;

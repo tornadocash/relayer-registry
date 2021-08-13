@@ -7,7 +7,9 @@ require('hardhat-etherscan-abi')
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: '0.7.6',
+  solidity: {
+    compilers: [{ version: '0.7.6' }, { version: '0.6.12' }],
+  },
   settings: {
     optimizer: {
       enabled: true,
