@@ -27,6 +27,7 @@ contract RelayerRegistry is Ownable, Initializable {
   event Kick(address indexed relayer, bool confiscation);
   event NewMinStake(uint256 stake);
   event NewTxFee(uint256 fee);
+  event NewWithdrawalProxy(address proxy);
   event Transaction(address indexed _relayer, uint _fee);
 
 
@@ -85,6 +86,11 @@ contract RelayerRegistry is Ownable, Initializable {
   function setMinStake(uint256 _stake) external onlyOwner {
     minStake = _stake;
     emit NewMinStake(_stake);
+  }
+
+  function setWithdrawalProxy(address _proxy) external onlyOwner {
+    withdrawalProxy = _proxy;
+    emit NewWithdrawalProxy(_proxy);
   }
 
   function kick(address _relayer, bool confiscateStake) external onlyOwner {
