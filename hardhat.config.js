@@ -2,6 +2,7 @@ require('dotenv').config()
 require('@nomiclabs/hardhat-waffle')
 require('@nomiclabs/hardhat-etherscan')
 require('hardhat-etherscan-abi')
+require('hardhat-contract-sizer')
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -60,5 +61,10 @@ module.exports = {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
     apiKey: process.env.ETHERSCAN_KEY,
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false,
   },
 }

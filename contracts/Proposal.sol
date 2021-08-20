@@ -17,17 +17,26 @@ interface IProposal4 {
   function getInstances() external view returns (TornadoProxy.Tornado[] memory instances);
 }
 
+interface ITornadoProxy {
+  function updateInstance(TornadoProxy.Tornado calldata) external;
+  function tornadoTrees() external view returns(address);
+  function governance() external view returns(address);
+  function instances(ITornadoInstance) external view returns(bool, IERC20, TornadoProxy.InstanceState);
+}
+
 interface TornadoTrees is ITornadoTrees {
   function setTornadoProxyContract(address _tornadoProxy) external;
 }
 
+
 contract Proposal {
-  TornadoProxy public constant tornadoProxyV2 = TornadoProxy(0x722122dF12D4e14e13Ac3b6895a86e84145b6967);
+  ITornadoProxy public constant tornadoProxyV2 = ITornadoProxy(0x722122dF12D4e14e13Ac3b6895a86e84145b6967);
   TornadoTrees public constant tornadoTrees = TornadoTrees(0x527653eA119F3E6a1F5BD18fbF4714081D7B31ce);
   IProposal4 public constant proposal4 = IProposal4(0x4B6C07B8940a7602fE4332AFa915b366e56eAce5);
   address public constant governance = 0x5efda50f22d34F262c29268506C5Fa42cB56A1Ce;
   uint256 public constant txFee = 0.1 ether;
   uint256 public constant minStake = 500 ether;
+  uint256 public constant govFeeSplitPercent = 95;
 
   event DeploymentOf(string name, address addr);
 
@@ -63,7 +72,7 @@ contract Proposal {
 
     // initializing Relayer registry
     RelayerRegistry registry = RelayerRegistry(address(registryProxy));
-    registry.initialize(address(tornadoProxyV3), txFee, minStake);
+    registry.initialize(address(tornadoProxyV3), txFee, minStake, govFeeSplitPercent);
 
     // registering the new tornadoProxy contract in tornadoTrees
     tornadoTrees.setTornadoProxyContract(address(tornadoProxyV3));
