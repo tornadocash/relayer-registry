@@ -26,19 +26,18 @@ contract RelayerRegistry is Initializable {
   event Register(bytes32 ensHash, address relayer);
   event Stake(address indexed relayer, uint256 stake);
   event Kick(address indexed relayer, bool confiscation);
-  event Transaction(address indexed relayer, uint fee);
+  event Transaction(address indexed relayer, uint256 fee);
   event NewMinStake(uint256 stake);
   event NewTxFee(uint256 fee);
   event NewWithdrawalProxy(address proxy);
   event NewGovFeeSplitPercent(uint256 govFeeSplitPercent);
 
-
-  modifier onlyWithdrawalProxy {
+  modifier onlyWithdrawalProxy() {
     require(msg.sender == withdrawalProxy, "only withdrawal proxy");
     _;
   }
 
-  modifier onlyGovernance {
+  modifier onlyGovernance() {
     require(msg.sender == GOV, "only governance");
     _;
   }
@@ -49,14 +48,24 @@ contract RelayerRegistry is Initializable {
     mapping(address => bool) addresses;
   }
 
-  function initialize(address _withdrawalProxy, uint256 _txFee, uint256 _minStake, uint256 _govFeeSplitPercent) external initializer {
+  /// @dev since this is an implementation contract used by upgradability proxy
+  constructor() {
+    initialize(address(0), 0, 0, 0);
+  }
+
+  function initialize(
+    address _withdrawalProxy,
+    uint256 _txFee,
+    uint256 _minStake,
+    uint256 _govFeeSplitPercent
+  ) public initializer {
     withdrawalProxy = _withdrawalProxy;
     txFee = _txFee;
     minStake = _minStake;
     govFeeSplitPercent = _govFeeSplitPercent;
   }
 
-  function register(uint _stake, bytes32 _ensHash) external {
+  function register(uint256 _stake, bytes32 _ensHash) external {
     require(msg.sender == ENS.owner(_ensHash), "only owner of the ENS name");
     Relayer storage relayer = relayers[msg.sender];
     require(relayer.ensHash == bytes32(0) && _stake >= minStake);
@@ -68,16 +77,15 @@ contract RelayerRegistry is Initializable {
     emit Register(_ensHash, msg.sender);
   }
 
-  function stake(uint _stake) external {
+  function stake(uint256 _stake) external {
     Relayer storage relayer = relayers[msg.sender];
     require(relayer.ensHash != bytes32(0), "Only registered relayers can top up balance");
     _updateStake(_stake, relayer);
   }
 
-
-  function transaction(address _sender, address _feeReceiver) onlyWithdrawalProxy external {
+  function transaction(address _sender, address _feeReceiver) external onlyWithdrawalProxy {
     Relayer storage relayer = relayers[_feeReceiver];
-    if(relayer.ensHash != bytes32(0)) {
+    if (relayer.ensHash != bytes32(0)) {
       require(relayer.addresses[_sender], "only registered relayer can send");
       uint256 fee = relayer.balance > txFee ? txFee : relayer.balance;
       relayer.balance -= fee;
@@ -87,8 +95,8 @@ contract RelayerRegistry is Initializable {
   }
 
   function distributeFees() external {
-    uint _totalTornBurned = totalTornBurned;
-    uint govAmount = totalTornBurned.mul(govFeeSplitPercent).div(100);
+    uint256 _totalTornBurned = totalTornBurned;
+    uint256 govAmount = totalTornBurned.mul(govFeeSplitPercent).div(100);
     TORN.transfer(GOV, govAmount);
     TORN.transfer(address(0), _totalTornBurned.sub(govAmount));
   }
@@ -116,12 +124,12 @@ contract RelayerRegistry is Initializable {
 
   function kick(address _relayer, bool confiscateStake) external onlyGovernance {
     Relayer storage relayer = relayers[_relayer];
-    TORN.transfer(confiscateStake ? msg.sender : _relayer, relayer.balance);
+    TORN.transfer(confiscateStake ? GOV : _relayer, relayer.balance);
     relayer.balance = 0;
     emit Kick(_relayer, confiscateStake);
   }
 
-  function _updateStake(uint _stake, Relayer storage relayer) private {
+  function _updateStake(uint256 _stake, Relayer storage relayer) private {
     TORN.transferFrom(msg.sender, address(this), _stake);
     relayer.balance = relayer.balance.add(_stake);
     emit Stake(msg.sender, _stake);

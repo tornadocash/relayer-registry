@@ -8,10 +8,9 @@ More info: https://torn.community/t/
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/proxy/TransparentUpgradeableProxy.sol";
-
 import "./TornadoProxyV3.sol";
 import "./RelayerRegistry.sol";
+import "./AdminUpgradeableProxy.sol";
 
 interface IProposal4 {
   function getInstances() external view returns (TornadoProxy.Tornado[] memory instances);
@@ -19,21 +18,31 @@ interface IProposal4 {
 
 interface ITornadoProxy {
   function updateInstance(TornadoProxy.Tornado calldata) external;
-  function tornadoTrees() external view returns(address);
-  function governance() external view returns(address);
-  function instances(ITornadoInstance) external view returns(bool, IERC20, TornadoProxy.InstanceState);
+
+  function tornadoTrees() external view returns (address);
+
+  function governance() external view returns (address);
+
+  function instances(ITornadoInstance)
+    external
+    view
+    returns (
+      bool,
+      IERC20,
+      TornadoProxy.InstanceState
+    );
 }
 
 interface TornadoTrees is ITornadoTrees {
   function setTornadoProxyContract(address _tornadoProxy) external;
 }
 
-
 contract Proposal {
   ITornadoProxy public constant tornadoProxyV2 = ITornadoProxy(0x722122dF12D4e14e13Ac3b6895a86e84145b6967);
   TornadoTrees public constant tornadoTrees = TornadoTrees(0x527653eA119F3E6a1F5BD18fbF4714081D7B31ce);
   IProposal4 public constant proposal4 = IProposal4(0x4B6C07B8940a7602fE4332AFa915b366e56eAce5);
   address public constant governance = 0x5efda50f22d34F262c29268506C5Fa42cB56A1Ce;
+  address public constant registryImpl = 0xE9c171C583115282fe1ed6e93E7b1b8aE758Ed51;
   uint256 public constant txFee = 0.1 ether;
   uint256 public constant minStake = 500 ether;
   uint256 public constant govFeeSplitPercent = 95;
@@ -44,21 +53,17 @@ contract Proposal {
     TornadoProxy.Tornado[] memory instances = getInstances();
     // disabling all instances on current tornadoProxy
     for (uint256 i = 0; i < instances.length; i++) {
-      tornadoProxyV2.updateInstance(TornadoProxy.Tornado({
-        addr: instances[i].addr,
-        instance: TornadoProxy.Instance({
-          isERC20: false,
-          token: IERC20(0),
-          state: TornadoProxy.InstanceState.DISABLED
+      tornadoProxyV2.updateInstance(
+        TornadoProxy.Tornado({
+          addr: instances[i].addr,
+          instance: TornadoProxy.Instance({ isERC20: false, token: IERC20(0), state: TornadoProxy.InstanceState.DISABLED })
         })
-      }));
+      );
     }
 
-    // deploying Relayer registry upgradable proxy and its implementation
-    RelayerRegistry registryImpl = new RelayerRegistry();
-    emit DeploymentOf("Relayer Registry implementation", address(registryImpl));
+    require(isContract(registryImpl), "Relayer registry implementation not deployed");
 
-    TransparentUpgradeableProxy registryProxy = new TransparentUpgradeableProxy(address(registryImpl), governance, "");
+    AdminUpgradeableProxy registryProxy = new AdminUpgradeableProxy(registryImpl, governance, "");
     emit DeploymentOf("Relayer Registry proxy", address(registryProxy));
 
     // deploying the new tornadoProxy
@@ -82,11 +87,24 @@ contract Proposal {
   function getInstances() public view returns (TornadoProxy.Tornado[] memory instances) {
     instances = proposal4.getInstances();
 
-    for(uint i = 0; i < instances.length; i++) {
+    for (uint256 i = 0; i < instances.length; i++) {
       (bool isERC20, IERC20 token, TornadoProxy.InstanceState state) = tornadoProxyV2.instances(instances[i].addr);
       require(instances[i].instance.isERC20 == isERC20, "Incorrect instance state (isERC20)");
       require(instances[i].instance.token == token, "Incorrect instance token");
       instances[i].instance.state = state;
     }
+  }
+
+  function isContract(address account) public view returns (bool) {
+    // This method relies on extcodesize, which returns 0 for contracts in
+    // construction, since the code is only stored at the end of the
+    // constructor execution.
+
+    uint256 size;
+    // solhint-disable-next-line no-inline-assembly
+    assembly {
+      size := extcodesize(account)
+    }
+    return size > 0;
   }
 }

@@ -20,11 +20,10 @@ module.exports = {
   networks: {
     hardhat: {
       blockGasLimit: 9500000,
-      gasPrice: 0,
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_KEY}`,
-        blockNumber: 13000000,
+        blockNumber: 13061500,
       },
     },
     mainnet: {
