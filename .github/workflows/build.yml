@@ -18,7 +18,10 @@ jobs:
         with:
           node-version: 14
       - run: yarn install
-      - run: yarn test
+      - name: Testing
+        run: yarn test
+        env:
+          ALCHEMY_KEY: ${{ secrets.ALCHEMY_KEY }}
       - run: yarn lint
       - name: Telegram Failure Notification
         uses: appleboy/telegram-action@0.0.7
